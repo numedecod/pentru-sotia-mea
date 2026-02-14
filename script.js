@@ -15,7 +15,6 @@ async function initMic() {
         function checkBlow() {
             analyser.getByteFrequencyData(dataArray);
             let average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-
             if (average > 40) { 
                 document.getElementById('flame').style.display = 'none';
                 setTimeout(() => {
@@ -23,9 +22,7 @@ async function initMic() {
                     setTimeout(() => document.getElementById('candle-screen').style.display = 'none', 1000);
                 }, 500);
                 stream.getTracks().forEach(track => track.stop());
-            } else {
-                requestAnimationFrame(checkBlow);
-            }
+            } else { requestAnimationFrame(checkBlow); }
         }
         checkBlow();
     } catch {
@@ -36,37 +33,36 @@ async function initMic() {
 }
 window.onload = initMic;
 
-// 2. Logica Răsfoire Poze (Una câte una)
-const images = Array.from(document.querySelectorAll('.gallery img'));
-let topImageIndex = 0; // Indexul pozei care este deasupra
-
-gallery.addEventListener('click', () => {
-    if (topImageIndex < images.length) {
-        images[topImageIndex].classList.add('fly-away');
-        topImageIndex++;
+// 2. Logica Rasfoire (Rescrisă)
+gallery.addEventListener('click', function() {
+    // Luam toate pozele care NU au inca clasa fly-away
+    const availableImages = Array.from(document.querySelectorAll('.gallery img:not(.fly-away)'));
+    
+    if (availableImages.length > 0) {
+        // Sortam sa fim siguri ca o luam pe cea cu z-index-ul cel mai mare (de deasupra)
+        availableImages.sort((a, b) => b.style.zIndex - a.style.zIndex);
+        availableImages[0].classList.add('fly-away');
     } else {
-        // Resetăm galeria dacă s-au terminat pozele
-        images.forEach(img => img.classList.remove('fly-away'));
-        topImageIndex = 0;
+        // Resetam galeria daca toate au zburat
+        document.querySelectorAll('.gallery img').forEach(img => {
+            img.classList.remove('fly-away');
+        });
     }
 });
 
-// 3. Butonul NU fuge
+// 3. Butonul NU
 const moveButton = () => {
-    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
-    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
     noBtn.style.position = 'fixed';
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top = `${y}px`;
+    noBtn.style.left = Math.random() * 80 + 'vw';
+    noBtn.style.top = Math.random() * 80 + 'vh';
 };
 noBtn.onmouseover = moveButton;
 noBtn.ontouchstart = (e) => { e.preventDefault(); moveButton(); };
 
-// 4. Click pe DA + Cronometru
+// 4. DA
 yesBtn.onclick = () => {
     document.getElementById('game-container').classList.add('hidden');
     document.getElementById('letter-container').classList.remove('hidden');
-    
     const startDate = new Date("2025-03-11T00:00:00");
     setInterval(() => {
         const diff = Math.floor((new Date() - startDate) / 1000);
