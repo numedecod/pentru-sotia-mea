@@ -1,10 +1,8 @@
 const noBtn = document.getElementById('no-btn');
 const yesBtn = document.getElementById('yes-btn');
 const gallery = document.getElementById('photo-gallery');
-const gameContainer = document.getElementById('game-container');
-const letterContainer = document.getElementById('letter-container');
 
-// 1. Detectare suflat în microfon
+// 1. Detectare suflat
 async function initMic() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -12,15 +10,13 @@ async function initMic() {
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
         microphone.connect(analyser);
-        analyser.fftSize = 256;
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
         function checkBlow() {
             analyser.getByteFrequencyData(dataArray);
-            let sum = dataArray.reduce((a, b) => a + b);
-            let average = sum / dataArray.length;
+            let average = dataArray.reduce((a, b) => a + b) / dataArray.length;
 
-            if (average > 45) { // Pragul de suflat
+            if (average > 40) { 
                 document.getElementById('flame').style.display = 'none';
                 setTimeout(() => {
                     document.getElementById('candle-screen').style.opacity = '0';
@@ -32,8 +28,7 @@ async function initMic() {
             }
         }
         checkBlow();
-    } catch (err) {
-        // Dacă refuză microfonul, lăsăm un click pe ecran să funcționeze
+    } catch {
         document.getElementById('candle-screen').onclick = () => {
             document.getElementById('candle-screen').style.display = 'none';
         };
@@ -41,9 +36,19 @@ async function initMic() {
 }
 window.onload = initMic;
 
-// 2. Click pe galerie pentru desfacere
+// 2. Logica Răsfoire Poze (Una câte una)
+const images = Array.from(document.querySelectorAll('.gallery img'));
+let topImageIndex = 0; // Indexul pozei care este deasupra
+
 gallery.addEventListener('click', () => {
-    gallery.classList.toggle('open');
+    if (topImageIndex < images.length) {
+        images[topImageIndex].classList.add('fly-away');
+        topImageIndex++;
+    } else {
+        // Resetăm galeria dacă s-au terminat pozele
+        images.forEach(img => img.classList.remove('fly-away'));
+        topImageIndex = 0;
+    }
 });
 
 // 3. Butonul NU fuge
@@ -54,19 +59,17 @@ const moveButton = () => {
     noBtn.style.left = `${x}px`;
     noBtn.style.top = `${y}px`;
 };
-noBtn.addEventListener('mouseover', moveButton);
-noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+noBtn.onmouseover = moveButton;
+noBtn.ontouchstart = (e) => { e.preventDefault(); moveButton(); };
 
-// 4. Click pe DA
-yesBtn.addEventListener('click', () => {
-    gameContainer.classList.add('hidden');
-    letterContainer.classList.remove('hidden');
-
-    // Pornire Cronometru (11 Martie 2025)
+// 4. Click pe DA + Cronometru
+yesBtn.onclick = () => {
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('letter-container').classList.remove('hidden');
+    
     const startDate = new Date("2025-03-11T00:00:00");
     setInterval(() => {
-        const now = new Date();
-        const diff = Math.floor((now - startDate) / 1000);
+        const diff = Math.floor((new Date() - startDate) / 1000);
         document.getElementById('seconds-count').innerText = diff.toLocaleString('ro-RO');
     }, 1000);
-});
+};
