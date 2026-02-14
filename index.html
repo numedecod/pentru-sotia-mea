@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pentru Tine ❤️</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="candle-screen">
+        <h2 id="candle-instruction">Suflă în microfon ca să aprinzi magia... 🕯️</h2>
+        <div class="candle">
+            <div class="flame" id="flame"></div>
+            <div class="wick"></div>
+            <div class="wax"></div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div class="gallery" id="photo-gallery">
+            <img src="poza1.jpg" alt="1" style="--i:1">
+            <img src="poza2.jpg" alt="2" style="--i:2">
+            <img src="poza3.jpg" alt="3" style="--i:3">
+            <img src="poza4.jpg" alt="4" style="--i:4">
+            <img src="us.jpg" alt="Us" style="--i:5">
+        </div>
+        <p class="hint">Apasă pe poze ❤️</p>
+
+        <h1 id="question">Do You Want to be my Valentine? 🌹</h1>
+        <div class="buttons">
+            <button id="yes-btn">DA</button>
+            <button id="no-btn">NU</button>
+        </div>
+    </div>
+
+    <div id="letter-container" class="hidden">
+        <div class="letter-content">
+            <h1>Știam că vei spune DA! ❤️</h1>
+            <p>Ești cea mai minunată soție.</p>
+            <p>Te iubesc!</p>
+            <div id="timer">Suntem împreună de: <br> <span id="seconds-count">0</span> secunde</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
